@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Participación Institucional</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1200px; /* Increased max-width for global section */
+            margin: auto;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Firefox */
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .data-grid {
+            margin-top: 20px;
+        }
+        .data-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .data-grid th, .data-grid td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-grid th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .data-grid td input {
+            width: 80px; /* Adjust width for number inputs */
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #reportStatus {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-buttons button {
+            background-color: #6c757d;
+            margin: 0 5px;
+        }
+        .tab-buttons button.active {
+            background-color: #007bff;
+        }
+        .tab-content {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .global-summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .global-summary th, .global-summary td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .global-summary th {
+            background-color: #f8f9fa;
+        }
+        .global-summary .parroquia-row {
+            background-color: #e2e6ea;
+            font-weight: bold;
+        }
+        .global-summary .total-row {
+            background-color: #d1e7dd;
+            font-weight: bold;
+        }
+        .global-summary .subtotal-row {
+            background-color: #f0f8ff; /* Light blue for subtotals */
+            font-weight: bold;
+        }
+        .report-list {
+            margin-top: 20px;
+        }
+        .report-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .report-list li {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .report-list li button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reporte de Participación Institucional</h1>
+
+        <div class="tab-buttons">
+            <button id="entryTabBtn" class="active">Entrada de Datos</button>
+            <button id="globalTabBtn">Reporte Global</button>
+        </div>
+
+        <div id="entrySection" class="tab-content">
+            <div class="form-group">
+                <label for="parroquiaSelect">Seleccionar Parroquia:</label>
+                <select id="parroquiaSelect">
+                    <option value="">-- Seleccione una Parroquia --</option>
+                </select>
+            </div>
+
+            <div class="form-group hidden" id="comunaSelectGroup">
+                <label for="comunaSelect">Seleccionar Comuna:</label>
+                <select id="comunaSelect">
+                    <option value="">-- Seleccione una Comuna --</option>
+                </select>
+            </div>
+
+            <div class="form-group hidden" id="reportDateGroup">
+                <label for="reportDate">Fecha del Reporte:</label>
+                <input type="date" id="reportDate">
+            </div>
+
+            <div id="dataEntrySection" class="hidden">
+                <h2>Datos Numéricos</h2>
+                <div class="data-grid">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>BRIGADISTAS MSV</td><td><input type="number" id="brigaMsv" value="0"></td></tr>
+                            <tr><td>FUNDAPROAL</td><td><input type="number" id="fundaproal" value="0"></td></tr>
+                            <tr><td>Mercal</td><td><input type="number" id="mercal" value="0"></td></tr>
+                            <tr><td>INN</td><td><input type="number" id="innUn" value="0"></td></tr>
+                            <tr><td>CNAE</td><td><input type="number" id="cnae" value="0"></td></tr>
+                            <tr><td>MIC</td><td><input type="number" id="mic" value="0"></td></tr>
+                            <tr><td>JUVENTUD</td><td><input type="number" id="juventud" value="0"></td></tr>
+                            <tr><td>VOCERÍA O (A) T A</td><td><input type="number" id="voceriaOAT" value="0"></td></tr>
+                            <tr><td>VOCERÍA O (A) T 5</td><td><input type="number" id="voceriaOAT5" value="0"></td></tr>
+                            <tr><td>SALA AUTO GOBIERNO</td><td><input type="number" id="salaAutoGob" value="0"></td></tr>
+                            <tr><td>CCBI</td><td><input type="number" id="ccbi" value="0"></td></tr>
+                            <tr><td>CBBI</td><td><input type="number" id="cbbi" value="0"></td></tr>
+                            <tr><td>UBCH</td><td><input type="number" id="ubch" value="0"></td></tr>
+                            <!-- LUNCH REMOVED -->
+                            <tr><td>SISTEMA DE MISIONES</td><td><input type="number" id="sisMisiones" value="0"></td></tr>
+                            <tr><td>OTROS PARTICIPANTES</td><td><input type="number" id="otrosPart" value="0"></td></tr>
+                            <tr><td>SUB. TOTAL (General)</td><td><input type="number" id="subTotal" value="0" readonly></td></tr>
+                            <tr><td>ABUELOS Y ABUELAS VALIDADOS</td><td><input type="number" id="abuelosVal" value="0"></td></tr>
+                            <tr>><td><h2 style="color: #ff000a;">SUB. TOTAL ABUELOS</h2></td><td><input type="number" id="subTotalAbuelos" value="0" readonly></td></tr>
+                            <tr><td>FALLECIDOS</td><td><input type="number" id="fallecidos" value="0"></td></tr>
+                            <tr><td>FUERA DEL TERRITORIO</td><td><input type="number" id="fueraTerritorio" value="0"></td></tr>
+                            <tr><td>NUEVA CAPTACIÓN</td><td><input type="number" id="nuevaCaptacion" value="0"></td></tr>
+                            <tr><td>NIÑOS (AS) NO ESCOLARIZADOS</td><td><input type="number" id="ninosNoEsc" value="0"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="button-group">
+                    <button id="saveReportBtn">Guardar Reporte</button>
+                    <button id="editReportBtn" class="hidden">Actualizar Reporte</button>
+                    <button id="deleteReportBtn" class="hidden" style="background-color: #dc3545;">Eliminar Reporte</button>
+                </div>
+                <div id="reportStatus" class="hidden">
+                    <p>Reporte seleccionado del: <span id="currentReportDateDisplay">N/A</span></p>
+                    <p>Días transcurridos desde esa fecha: <span id="daysPassed">0</span></p>
+                </div>
+            </div>
+
+            <div class="report-list hidden" id="reportListSection">
+                <h2>Reportes Guardados para esta Comuna y Parroquia</h2>
+                <ul id="savedReportsList">
+                    <!-- Reports will be loaded here -->
+                </ul>
+            </div>
+        </div>
+
+        <div id="globalSection" class="tab-content hidden">
+            <h2>Consolidado Global de Reportes</h2>
+            <div class="global-summary">
+                <!-- Global summary will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyCAN7HlY0Gt9-cBQgwpro8336cfQSIsdeA", // <<-- Revisa este valor
+          authDomain: "registro-electoral-79cc4.firebaseapp.com",
+          databaseURL: "https://registro-electoral-79cc4-default-rtdb.firebaseio.com",
+          projectId: "registro-electoral-79cc4",
+          storageBucket: "registro-electoral-79cc4.firebasestorage.app",
+          messagingSenderId: "208955490744",
+          appId: "1:208955490744:web:46c25c96e0f2a00403cf4d",
+          measurementId: "G-5EQC4681XW"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.analytics(); // Removed getAnalytics as we use compat library
+        const database = firebase.database(); // Get a reference to the Realtime Database service
+
+
+        const parroquiasYComunas = {
+            "PQ. AGUA SALADA": [
+                "CHAVEZ POR SIEMPRE VIVE",
+                "DESPERTAR BOLIVARIANO DE ANGOSTURA",
+                "LOS PROCERES HEROICOS",
+                "RESTIADOS CON MADURO",
+                "SOCIALISTA AMOR A CHAVEZ",
+                "SOCIALISTAS REVOLUCIONARIO DEL ORINOCO",
+                "SUR DE AGUA SALADA"
+            ],
+            "PQ. CATEDRAL": [
+                "GENERAL CARLOS MANUEL PIAR",
+                "GUERRILLEROS HEROICOS DE CATEDRAL",
+                "PETRO COMUNA PRODUCTIVA CATEDRAL"
+            ],
+            "PQ. JOSE ANTONIO PAEZ": [
+                "CHAVEZ CORAZON DE MI PATRIA",
+                "EL ARAÑERO DE SABANETA",
+                "EL ARBOL DE LAS 3 RAICES",
+                "JOSE ANTONIO PAEZ",
+                "LUCHADORES DE MI PATRIA",
+                "PEDRO CAMEJO"
+            ],
+            "PQ. LA SABANITA": [
+                "BRISAS DEL ESTE UNIDOS",
+                "CHAVEZ VIVE",
+                "COMANDANTE OBRERO EL ESTADIO",
+                "LOS GUERREROS SOCIALISTA DEL EJE 1 PARROQUIA LA SABANITA",
+                "SOCIALISTA COMUNA O NADA",
+                "SOCIALISTA SIMON BOLIVAR",
+                "VANGUARDIA REVOLUCIONARIA DE BRISAS DEL ORINOCO"
+            ],
+            "PQ. MARHUANTA": [
+                "LA PATRIA SOCIALISTA DE BOLIVAR"
+            ],
+            "PQ. ORINOCO": [
+                "AGRICOLA GUERREROS DEL ORINOCO"
+            ],
+            "PQ. PANAPANA": [
+                "PANAPANA SOCIALISTA"
+            ],
+            "PQ. VISTA HERMOSA": [
+                "4F REBELIÓN POPULAR",
+                "LOS SUEÑOS DE CHAVEZ II",
+                "VISTA HERMOSA REVOLUCIONARIA"
+            ],
+            "PQ. ZEA": [
+                "ZAMORA TIERRA Y HOMBRES LIBRES"
+            ]
+        };
+
+        // --- DOM Elements ---
+        const parroquiaSelect = document.getElementById('parroquiaSelect');
+        const comunaSelectGroup = document.getElementById('comunaSelectGroup');
+        const comunaSelect = document.getElementById('comunaSelect');
+        const reportDateGroup = document.getElementById('reportDateGroup');
+        const reportDateInput = document.getElementById('reportDate');
+        const dataEntrySection = document.getElementById('dataEntrySection');
+        const saveReportBtn = document.getElementById('saveReportBtn');
+        const editReportBtn = document.getElementById('editReportBtn');
+        const deleteReportBtn = document.getElementById('deleteReportBtn');
+        const reportStatus = document.getElementById('reportStatus');
+        const currentReportDateDisplay = document.getElementById('currentReportDateDisplay');
+        const daysPassedSpan = document.getElementById('daysPassed');
+        const reportListSection = document.getElementById('reportListSection');
+        const savedReportsList = document.getElementById('savedReportsList');
+
+        // Tabs
+        const entryTabBtn = document.getElementById('entryTabBtn');
+        const globalTabBtn = document.getElementById('globalTabBtn');
+        const entrySection = document.getElementById('entrySection');
+        const globalSection = document.getElementById('globalSection');
+
+        // --- Data Fields ---
+        // 'lunch' has been removed
+        const inputIds = [
+            'brigaMsv', 'innUn', 'fundaproal', 'mercal', 'cnae', 'mic', 'juventud', 'voceriaOAT', 'voceriaOAT5',
+            'salaAutoGob', 'ccbi', 'cbbi', 'ubch', /* 'lunch', */ 'sisMisiones', 'otrosPart',
+            'subTotal', // General subtotal
+            'abuelosVal',
+            'subTotalAbuelos', // New subtotal
+            'fallecidos', 'fueraTerritorio', 'nuevaCaptacion', 'ninosNoEsc'
+        ];
+        
+        const inputNames = { // For global report display
+            'brigaMsv': 'BRIGADISTAS MSV',
+            'innUn': 'INN UNDAPROA',
+            'cnae': 'CNAE',
+            'mic': 'MIC',
+            'juventud': 'JUVENTUD',
+            'mercal': 'Mercal',
+            'fundaproal': 'FUNDAPROAL',
+            'voceriaOAT': 'VOCERÍA O (A) T A',
+            'voceriaOAT5': 'VOCERÍA O (A) T 5',
+            'salaAutoGob': 'SALA AUTO GOBIERNO',
+            'ccbi': 'CCBI',
+            'cbbi': 'CBBI',
+            'ubch': 'UBCH',
+            // 'lunch': 'LUNCH', // Removed
+            'sisMisiones': 'SISTEMA DE MISIONES',
+            'otrosPart': 'OTROS PARTICIPANTES',
+            'subTotal': 'SUB. TOTAL (General)',
+            'abuelosVal': 'ABUELOS Y ABUELAS VALIDADOS',
+            'subTotalAbuelos': 'SUB. TOTAL ABUELOS', // New name
+            'fallecidos': 'FALLECIDOS',
+            'fueraTerritorio': 'FUERA DEL TERRITORIO',
+            'nuevaCaptacion': 'NUEVA CAPTACIÓN',
+            'ninosNoEsc': 'NIÑOS (AS) NO ESCOLARIZADOS'
+        };
+
+        // --- Functions ---
+
+        // Helper to encode/decode keys for Firebase paths (no special chars like . # $ [ ] /)
+        // Firebase keys cannot contain . # $ [ ] / or ASCII control characters (0-31 and 127).
+        // A simple replacement for dot is used here for date, and encodeURIComponent for names.
+        function encodeFirebaseKey(keyPart) {
+            return encodeURIComponent(keyPart).replace(/\./g, '%2E'); // Replace dot with encoded dot to avoid issues
+        }
+        function decodeFirebaseKey(keyPart) {
+            return decodeURIComponent(keyPart.replace(/%2E/g, '.'));
+        }
+
+        // Populate Parroquia dropdown
+        function populateParroquias() {
+            for (const parroquia in parroquiasYComunas) {
+                const option = document.createElement('option');
+                option.value = encodeFirebaseKey(parroquia);
+                option.textContent = parroquia;
+                parroquiaSelect.appendChild(option);
+            }
+        }
+
+        // Populate Comuna dropdown based on selected Parroquia
+        function populateComunas(encodedParroquia) {
+            comunaSelect.innerHTML = '<option value="">-- Seleccione una Comuna --</option>'; // Clear existing options
+            const selectedParroquia = decodeFirebaseKey(encodedParroquia);
+
+            if (selectedParroquia && parroquiasYComunas[selectedParroquia]) {
+                parroquiasYComunas[selectedParroquia].forEach(comuna => {
+                    const option = document.createElement('option');
+                    option.value = encodeFirebaseKey(comuna);
+                    option.textContent = comuna;
+                    comunaSelect.appendChild(option);
+                });
+                comunaSelectGroup.classList.remove('hidden');
+            } else {
+                comunaSelectGroup.classList.add('hidden');
+            }
+            // Hide other sections if no valid comuna is selected yet
+            reportDateGroup.classList.add('hidden');
+            dataEntrySection.classList.add('hidden');
+            reportStatus.classList.add('hidden');
+            reportListSection.classList.add('hidden'); // Hide report list too
+            clearInputFields();
+        }
+
+        // Clear all numerical input fields
+        function clearInputFields() {
+            inputIds.forEach(id => {
+                // Ensure the element actually exists before trying to set its value
+                const element = document.getElementById(id);
+                if (element) {
+                    element.value = 0;
+                }
+            });
+            // Also reset buttons state
+            saveReportBtn.classList.remove('hidden');
+            editReportBtn.classList.add('hidden');
+            deleteReportBtn.classList.add('hidden');
+        }
+
+        // Calculate General subTotal and Abuelos subTotal
+        function calculateSubTotals() {
+            let generalSum = 0;
+            let abuelosSum = 0;
+
+            const generalSubtotalInputs = [
+                'brigaMsv', 'innUn', 'mercal', 'fundaproal', 'cnae', 'mic', 'juventud', 'voceriaOAT', 'voceriaOAT5',
+                'salaAutoGob', 'ccbi', 'cbbi', 'ubch', /* 'lunch', */ 'sisMisiones', 'otrosPart'
+            ];
+
+            generalSubtotalInputs.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) { // Check if element exists (since lunch was removed)
+                    generalSum += parseInt(element.value) || 0;
+                }
+            });
+            const subTotalElement = document.getElementById('subTotal');
+            if (subTotalElement) subTotalElement.value = generalSum;
+
+            // Abuelos subtotal is just abuelosVal
+            const abuelosValElement = document.getElementById('abuelosVal');
+            if (abuelosValElement) {
+                abuelosSum = parseInt(abuelosValElement.value) || 0;
+            }
+            const subTotalAbuelosElement = document.getElementById('subTotalAbuelos');
+            if (subTotalAbuelosElement) subTotalAbuelosElement.value = abuelosSum;
+        }
+
+        // Get Firebase path for a specific report
+        function getReportPath(encodedParroquia, encodedComuna, date) {
+            // Firebase doesn't like dots in keys, so replace them in date for path
+            const firebaseSafeDate = date.replace(/\./g, '_'); 
+            return `reports/${encodedParroquia}/${encodedComuna}/${firebaseSafeDate}`;
+        }
+
+        // Load saved data for a specific Parroquia, Comuna, and Date from Firebase
+        async function loadSavedData(encodedParroquia, encodedComuna, date) {
+            clearInputFields();
+            reportStatus.classList.add('hidden');
+
+            if (!encodedParroquia || !encodedComuna || !date) {
+                dataEntrySection.classList.add('hidden');
+                return;
+            }
+
+            const reportPath = getReportPath(encodedParroquia, encodedComuna, date);
+            try {
+                const snapshot = await database.ref(reportPath).once('value');
+                const report = snapshot.val();
+
+                if (report) {
+                    inputIds.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element && report.values && report.values.hasOwnProperty(id)) {
+                            element.value = report.values[id] || 0;
+                        }
+                    });
+                    calculateSubTotals(); // Ensure subtotals are re-calculated based on loaded values
+                    updateReportStatusDisplay(date);
+                    reportStatus.classList.remove('hidden');
+                    
+                    saveReportBtn.classList.add('hidden');
+                    editReportBtn.classList.remove('hidden');
+                    deleteReportBtn.classList.remove('hidden');
+                } else {
+                    saveReportBtn.classList.remove('hidden');
+                    editReportBtn.classList.add('hidden');
+                    deleteReportBtn.classList.add('hidden');
+                    currentReportDateDisplay.textContent = 'N/A';
+                    daysPassedSpan.textContent = '0';
+                }
+            } catch (error) {
+                console.error("Error loading report:", error);
+                alert("Error cargando el reporte.");
+            }
+            dataEntrySection.classList.remove('hidden');
+            calculateSubTotals(); // Call once more after potential reset/load
+        }
+
+        // Update the display for report status
+        function updateReportStatusDisplay(reportDateStr) {
+            if (!reportDateStr) {
+                currentReportDateDisplay.textContent = 'N/A';
+                daysPassedSpan.textContent = '0';
+                reportStatus.classList.add('hidden');
+                return;
+            }
+
+            const reportDate = new Date(reportDateStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            currentReportDateDisplay.textContent = reportDateStr;
+
+            const timeDiff = today.getTime() - reportDate.getTime();
+            const daysDifference = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            daysPassedSpan.textContent = daysDifference;
+            reportStatus.classList.remove('hidden');
+        }
+
+        // List all saved reports for the current Parroquia and Comuna from Firebase
+        async function listSavedReports(encodedParroquia, encodedComuna) {
+            savedReportsList.innerHTML = '';
+            reportListSection.classList.add('hidden');
+
+            if (!encodedParroquia || !encodedComuna) {
+                return;
+            }
+
+            const comunaPath = `reports/${encodedParroquia}/${encodedComuna}`;
+            try {
+                const snapshot = await database.ref(comunaPath).once('value');
+                const reportsByDate = snapshot.val();
+
+                const reports = [];
+                for (const firebaseSafeDate in reportsByDate) {
+                    // Convert Firebase-safe date key back to standard date string if needed
+                    // Assuming Firebase-safe date used '_' for '.', revert it here
+                    reports.push(firebaseSafeDate.replace(/_/g, '.'));
+                }
+                reports.sort();
+
+                if (reports.length > 0) {
+                    reports.forEach(date => {
+                        const li = document.createElement('li');
+                        li.textContent = `Reporte del: ${date}`;
+
+                        const loadBtn = document.createElement('button');
+                        loadBtn.textContent = 'Cargar para editar';
+                        loadBtn.onclick = () => {
+                            reportDateInput.value = date;
+                            handleSelectionChange();
+                        };
+
+                        li.appendChild(loadBtn);
+                        savedReportsList.appendChild(li);
+                    });
+                    reportListSection.classList.remove('hidden');
+                } else {
+                    reportListSection.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error("Error listing reports:", error);
+            }
+        }
+
+        // --- Global Report Functions ---
+        async function generateGlobalReport() {
+            const globalSummaryDiv = document.querySelector('#globalSection .global-summary');
+            globalSummaryDiv.innerHTML = '<p>Cargando reportes globales...</p>'; // Loading message
+
+            let aggregatedData = {};
+            let globalTotals = {};
+
+            inputIds.forEach(id => globalTotals[id] = 0);
+
+            try {
+                const snapshot = await database.ref('reports').once('value');
+                const allReports = snapshot.val();
+
+                if (!allReports) {
+                    globalSummaryDiv.innerHTML = '<p>No hay reportes guardados para mostrar en la sección global.</p>';
+                    return;
+                }
+
+                for (const encodedParroquia in allReports) {
+                    for (const encodedComuna in allReports[encodedParroquia]) {
+                        for (const firebaseSafeDate in allReports[encodedParroquia][encodedComuna]) {
+                            const report = allReports[encodedParroquia][encodedComuna][firebaseSafeDate];
+                            
+                            const parroquia = decodeFirebaseKey(encodedParroquia);
+                            const comuna = decodeFirebaseKey(encodedComuna);
+
+                            if (!aggregatedData[parroquia]) {
+                                aggregatedData[parroquia] = {};
+                            }
+                            if (!aggregatedData[parroquia][comuna]) {
+                                aggregatedData[parroquia][comuna] = {};
+                                inputIds.forEach(id => aggregatedData[parroquia][comuna][id] = 0);
+                            }
+
+                            inputIds.forEach(id => {
+                                // Only add if the report actually contains this ID's value
+                                if (report.values && report.values.hasOwnProperty(id)) { 
+                                    aggregatedData[parroquia][comuna][id] += report.values[id] || 0;
+                                    globalTotals[id] += report.values[id] || 0;
+                                }
+                            });
+                        }
+                    }
+                }
+
+                if (Object.keys(aggregatedData).length === 0) {
+                    globalSummaryDiv.innerHTML = '<p>No hay reportes guardados para mostrar en la sección global.</p>';
+                    return;
+                }
+
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                const tfoot = document.createElement('tfoot');
+
+                let headerRow = '<tr><th>Parroquia / Comuna</th>';
+                inputIds.forEach(id => {
+                    headerRow += `<th>${inputNames[id]}</th>`;
+                });
+                headerRow += '</tr>';
+                thead.innerHTML = headerRow;
+                table.appendChild(thead);
+
+                for (const parroquia in aggregatedData) {
+                    let parroquiaTotals = {};
+                    inputIds.forEach(id => parroquiaTotals[id] = 0);
+
+                    const parroquiaRow = document.createElement('tr');
+                    parroquiaRow.classList.add('parroquia-row');
+                    parroquiaRow.innerHTML = `<td colspan="${inputIds.length + 1}">${parroquia}</td>`;
+                    tbody.appendChild(parroquiaRow);
+
+                    for (const comuna in aggregatedData[parroquia]) {
+                        const comunaData = aggregatedData[parroquia][comuna];
+                        let comunaRowHtml = `<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;${comuna}</td>`;
+                        inputIds.forEach(id => {
+                            const value = comunaData[id] || 0;
+                            comunaRowHtml += `<td>${value}</td>`;
+                            parroquiaTotals[id] += value;
+                        });
+                        comunaRowHtml += '</tr>';
+                        tbody.innerHTML += comunaRowHtml;
+                    }
+
+                    let parroquiaSubTotalRowHtml = `<tr class="subtotal-row"><td>Total ${parroquia}</td>`;
+                    inputIds.forEach(id => {
+                        parroquiaSubTotalRowHtml += `<td>${parroquiaTotals[id]}</td>`;
+                    });
+                    parroquiaSubTotalRowHtml += '</tr>';
+                    tbody.innerHTML += parroquiaSubTotalRowHtml;
+                }
+                table.appendChild(tbody);
+
+                let globalTotalRowHtml = `<tr class="total-row"><td>GRAN TOTAL</td>`;
+                inputIds.forEach(id => {
+                    globalTotalRowHtml += `<td>${globalTotals[id]}</td>`;
+                });
+                globalTotalRowHtml += '</tr>';
+                tfoot.innerHTML = globalTotalRowHtml;
+                table.appendChild(tfoot);
+
+                globalSummaryDiv.innerHTML = '';
+                globalSummaryDiv.appendChild(table);
+
+            } catch (error) {
+                console.error("Error generating global report:", error);
+                globalSummaryDiv.innerHTML = '<p>Error al generar el reporte global. Por favor, revisa la consola para más detalles.</p>';
+            }
+        }
+
+        // --- Event Listeners ---
+
+        // Tab Switching
+        entryTabBtn.addEventListener('click', () => {
+            entryTabBtn.classList.add('active');
+            globalTabBtn.classList.remove('active');
+            entrySection.classList.remove('hidden');
+            globalSection.classList.add('hidden');
+        });
+
+        globalTabBtn.addEventListener('click', () => {
+            globalTabBtn.classList.add('active');
+            entryTabBtn.classList.remove('active');
+            globalSection.classList.remove('hidden');
+            entrySection.classList.add('hidden');
+            generateGlobalReport();
+        });
+
+
+        // Populate parroquias on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            populateParroquias();
+            reportDateInput.value = new Date().toISOString().slice(0, 10);
+            
+            // Add input listeners for subtotal calculation
+            // Removed 'lunch' from this list
+            ['brigaMsv', 'innUn', 'cnae', 'mic', 'juventud', 'voceriaOAT', 'voceriaOAT5',
+             'salaAutoGob', 'ccbi', 'cbbi', 'ubch', /* 'lunch', */ 'sisMisiones', 'otrosPart',
+             'abuelosVal'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) { // Ensure element exists before adding listener
+                    element.addEventListener('input', calculateSubTotals);
+                }
+            });
+        });
+
+        // Parroquia selection change
+        parroquiaSelect.addEventListener('change', function() {
+            const selectedEncodedParroquia = this.value;
+            populateComunas(selectedEncodedParroquia);
+            if (selectedEncodedParroquia) {
+                comunaSelectGroup.classList.remove('hidden');
+            } else {
+                comunaSelectGroup.classList.add('hidden');
+            }
+            reportDateGroup.classList.add('hidden');
+            dataEntrySection.classList.add('hidden');
+            reportStatus.classList.add('hidden');
+            reportListSection.classList.add('hidden');
+            clearInputFields();
+        });
+
+        // Comuna selection change and Report Date change
+        comunaSelect.addEventListener('change', handleSelectionChange);
+        reportDateInput.addEventListener('change', handleSelectionChange);
+
+        async function handleSelectionChange() {
+            const selectedEncodedParroquia = parroquiaSelect.value;
+            const selectedEncodedComuna = comunaSelect.value;
+            const selectedDate = reportDateInput.value;
+
+            if (selectedEncodedParroquia && selectedEncodedComuna && selectedDate) {
+                reportDateGroup.classList.remove('hidden');
+                await loadSavedData(selectedEncodedParroquia, selectedEncodedComuna, selectedDate);
+                await listSavedReports(selectedEncodedParroquia, selectedEncodedComuna);
+            } else {
+                reportDateGroup.classList.add('hidden');
+                dataEntrySection.classList.add('hidden');
+                reportStatus.classList.add('hidden');
+                reportListSection.classList.add('hidden');
+                clearInputFields();
+            }
+        }
+
+        // Save Report button click (for new reports)
+        saveReportBtn.addEventListener('click', async function() {
+            const selectedEncodedParroquia = parroquiaSelect.value;
+            const selectedEncodedComuna = comunaSelect.value;
+            const selectedDate = reportDateInput.value;
+
+            if (!selectedEncodedParroquia || !selectedEncodedComuna || !selectedDate) {
+                alert('Por favor, selecciona una Parroquia, una Comuna y una Fecha de Reporte antes de guardar.');
+                return;
+            }
+
+            const reportPath = getReportPath(selectedEncodedParroquia, selectedEncodedComuna, selectedDate);
+            
+            try {
+                const snapshot = await database.ref(reportPath).once('value');
+                if (snapshot.exists()) {
+                    alert('Ya existe un reporte para esta fecha. Usa el botón "Actualizar Reporte" si deseas modificarlo.');
+                    return;
+                }
+
+                const reportData = {
+                    date: selectedDate,
+                    values: {}
+                };
+
+                inputIds.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) { // Ensure element exists before trying to get its value
+                        reportData.values[id] = parseInt(element.value) || 0;
+                    }
+                });
+                // Ensure subtotals are captured correctly even if they are readonly inputs
+                // Check if elements exist before getting values
+                const subTotalElement = document.getElementById('subTotal');
+                if (subTotalElement) reportData.values['subTotal'] = parseInt(subTotalElement.value) || 0;
+                
+                const subTotalAbuelosElement = document.getElementById('subTotalAbuelos');
+                if (subTotalAbuelosElement) reportData.values['subTotalAbuelos'] = parseInt(subTotalAbuelosElement.value) || 0;
+
+
+                await database.ref(reportPath).set(reportData);
+                updateReportStatusDisplay(selectedDate);
+                await listSavedReports(selectedEncodedParroquia, selectedEncodedComuna);
+                alert('Reporte guardado exitosamente para la fecha ' + selectedDate + '!');
+                
+                saveReportBtn.classList.add('hidden');
+                editReportBtn.classList.remove('hidden');
+                deleteReportBtn.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error saving report:", error);
+                alert("Error guardando el reporte. Por favor, revisa la consola.");
+            }
+        });
+
+        // Edit Report button click (to update existing report)
+        editReportBtn.addEventListener('click', async function() {
+            const selectedEncodedParroquia = parroquiaSelect.value;
+            const selectedEncodedComuna = comunaSelect.value;
+            const selectedDate = reportDateInput.value;
+
+            if (!selectedEncodedParroquia || !selectedEncodedComuna || !selectedDate) {
+                alert('Por favor, selecciona una Parroquia, una Comuna y una Fecha de Reporte válida para actualizar.');
+                return;
+            }
+
+            const reportPath = getReportPath(selectedEncodedParroquia, selectedEncodedComuna, selectedDate);
+            
+            try {
+                const snapshot = await database.ref(reportPath).once('value');
+                if (!snapshot.exists()) {
+                    alert('No existe un reporte para esta fecha para actualizar.');
+                    return;
+                }
+
+                const reportData = {
+                    date: selectedDate,
+                    values: {}
+                };
+
+                inputIds.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) { // Ensure element exists
+                        reportData.values[id] = parseInt(element.value) || 0;
+                    }
+                });
+                // Check if elements exist
+                const subTotalElement = document.getElementById('subTotal');
+                if (subTotalElement) reportData.values['subTotal'] = parseInt(subTotalElement.value) || 0;
+                
+                const subTotalAbuelosElement = document.getElementById('subTotalAbuelos');
+                if (subTotalAbuelosElement) reportData.values['subTotalAbuelos'] = parseInt(subTotalAbuelosElement.value) || 0;
+
+
+                await database.ref(reportPath).set(reportData);
+                updateReportStatusDisplay(selectedDate);
+                alert('Reporte actualizado exitosamente para la fecha ' + selectedDate + '!');
+
+            } catch (error) {
+                console.error("Error updating report:", error);
+                alert("Error actualizando el reporte. Por favor, revisa la consola.");
+            }
+        });
+
+        // Delete Report button click
+        deleteReportBtn.addEventListener('click', async function() {
+            const selectedEncodedParroquia = parroquiaSelect.value;
+            const selectedEncodedComuna = comunaSelect.value;
+            const selectedDate = reportDateInput.value;
+
+            if (!selectedEncodedParroquia || !selectedEncodedComuna || !selectedDate) {
+                alert('Por favor, selecciona una Parroquia, una Comuna y una Fecha de Reporte para eliminar.');
+                return;
+            }
+
+            const reportPath = getReportPath(selectedEncodedParroquia, selectedEncodedComuna, selectedDate);
+            
+            try {
+                const snapshot = await database.ref(reportPath).once('value');
+                if (!snapshot.exists()) {
+                    alert('No existe un reporte para esta fecha para eliminar.');
+                    return;
+                }
+
+                if (confirm(`¿Estás seguro de que quieres eliminar el reporte del ${selectedDate} para ${decodeFirebaseKey(selectedEncodedParroquia)} / ${decodeFirebaseKey(selectedEncodedComuna)}?`)) {
+                    await database.ref(reportPath).remove();
+                    alert('Reporte eliminado exitosamente.');
+                    clearInputFields();
+                    reportDateInput.value = new Date().toISOString().slice(0, 10);
+                    await handleSelectionChange(); // Refresh state and list
+                }
+            } catch (error) {
+                console.error("Error deleting report:", error);
+                alert("Error eliminando el reporte. Por favor, revisa la consola.");
+            }
+        });
+
+    </script>
+</body>
+</html>
